@@ -10,6 +10,7 @@ def yd2_detector(pulse_area,pulse_trig_t,pulse_heith_t,pulse_end_t,pulse_h):
     update - 20180413: 
         - fix a small bug that miss to veto pulse that has size less than 9300 but greater than 7000
         - add parts to veto potential printer signal
+        - add mask, pulse occupied as False, others, True
     
     '''
     # parameter section *****************
@@ -252,6 +253,17 @@ def yd2_detector(pulse_area,pulse_trig_t,pulse_heith_t,pulse_end_t,pulse_h):
             temp_operation_t[ind] = pulse_trig_t[s_p_ind[i]]
     
     
+    # compute mask
+    mask_out = np.ones(len(pulse_area),dtype=bool)
+    mast_ind = []
+    for i in range(0,len(s_p_ind)):
+        mast_ind = mast_ind + list(range(s_p_ind[i],m_p_ind[i]))
+    mast_ind = mast_ind + list(p_ind_final)
+    mast_ind.sort()
+    mask_out[mast_ind] = False
+    
+    
+    
     
     operation_comb = []
     operation_t_com = []
@@ -282,4 +294,4 @@ def yd2_detector(pulse_area,pulse_trig_t,pulse_heith_t,pulse_end_t,pulse_h):
             else:
                 operation.append(k)
                 operation_t.append(operation_t_com[i][1])
-    return exist, operation, operation_t
+    return exist, operation, operation_t,mask_out
