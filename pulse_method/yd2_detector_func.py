@@ -10,7 +10,7 @@ def yd2_detector(pulse_area,pulse_trig_t,pulse_heith_t,pulse_end_t,pulse_h):
     '''
     # parameter section *****************
     area_ub1 = 12000 # total pulse upper bound
-    area_lb1 = 9500  # total pulse lower bound
+    area_lb1 = 9300  # total pulse lower bound
     mw_pulse_thresh = 7000
     #area_ub2 = 9700  # second biggest pulse uppper bound
     #area_lb2 = 8500  # second biggest pulse lower bound
@@ -61,6 +61,9 @@ def yd2_detector(pulse_area,pulse_trig_t,pulse_heith_t,pulse_end_t,pulse_h):
                     mask_pre[i] = False
                     continue
             elif (p_area_indef[i] < area_ub1) & (p_area_indef[i] > area_lb1):
+                continue
+            else:
+                mask_pre[i] = False
                 continue
 
     p_index_semi_def = p_index_indef[mask_pre]
