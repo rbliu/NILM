@@ -7,6 +7,10 @@ def yd2_detector(pulse_area,pulse_trig_t,pulse_heith_t,pulse_end_t,pulse_h):
              operation : list of tuples. Each tuple contains two values: one is the operation, the other is the operation time.
              mask : numpy array that put False at the location where yd3 pulse is.
     Note: version with paring
+    update - 20180413: 
+        - fix a small bug that miss to veto pulse that has size less than 9300 but greater than 7000
+        - add parts to veto potential printer signal
+    
     '''
     # parameter section *****************
     area_ub1 = 12000 # total pulse upper bound
@@ -61,7 +65,17 @@ def yd2_detector(pulse_area,pulse_trig_t,pulse_heith_t,pulse_end_t,pulse_h):
                     mask_pre[i] = False
                     continue
             elif (p_area_indef[i] < area_ub1) & (p_area_indef[i] > area_lb1):
-                continue
+                #print('I am here')
+                t_w = [t_temp, t_temp+10] # # to discriminate with printer
+                window_cut = (pulse_heith_t >= t_w[0]) & (pulse_heith_t <= t_w[1]) # # to discriminate with printer
+                if any((np.abs(pulse_area[window_cut]) > 800) & (np.abs(pulse_area[window_cut]) < 3000)): # to discriminate with printer
+                    #print('I am here,ha')
+                    if (pulse_area[window_cut] > 7500).sum() == 0: # to discriminate with printer
+                        #print('I am here,haha')
+                        mask_pre[i] = False
+                        continue
+                else:
+                    continue
             else:
                 mask_pre[i] = False
                 continue
